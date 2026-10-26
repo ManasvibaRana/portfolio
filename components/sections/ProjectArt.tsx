@@ -20,6 +20,50 @@ function Frame({ accent, children }: { accent: string; children: React.ReactNode
   );
 }
 
+function VoiceAgent({ accent }: { accent: string }) {
+  const tools = [
+    { y: 42, label: "SQL", color: "#c9b6f0" },
+    { y: 74, label: "Docs", color: "#b8ead2" },
+    { y: 106, label: "Timetable", color: "#ffc9a8" },
+    { y: 138, label: "Reminders", color: "#ffb3c7" },
+  ];
+  return (
+    <Frame accent={accent}>
+      {/* microphone with sound waves */}
+      <circle cx="54" cy="90" r="30" fill={CREAM} />
+      <rect x="46" y="72" width="16" height="26" rx="8" fill={PLUM} />
+      <path d="M40 90a14 14 0 0 0 28 0M54 104v8M46 112h16" stroke={PLUM} strokeWidth="3" fill="none" strokeLinecap="round" />
+      {[0, 1, 2].map((i) => (
+        <path
+          key={i}
+          d={`M${92 + i * 9} ${74 - i * 6}q${10 + i * 2} ${16 + i * 6} 0 ${32 + i * 12}`}
+          stroke={PLUM}
+          strokeWidth="3"
+          fill="none"
+          strokeLinecap="round"
+          opacity={0.75 - i * 0.2}
+        />
+      ))}
+      {/* router */}
+      <rect x="128" y="74" width="54" height="32" rx="10" fill={PLUM} />
+      <text x="155" y="94" fontSize="11" fontFamily="monospace" fill={CREAM} textAnchor="middle">router</text>
+      {/* tools */}
+      {tools.map((t) => (
+        <g key={t.label}>
+          <path d={`M182 90 C 196 90, 194 ${t.y + 9}, 206 ${t.y + 9}`} stroke={PLUM} strokeOpacity="0.35" strokeWidth="2" fill="none" />
+          <rect x="206" y={t.y} width="62" height="18" rx="9" fill={t.color} />
+          <text x="237" y={t.y + 12.5} fontSize="9" fontFamily="monospace" fill={PLUM} textAnchor="middle">{t.label}</text>
+        </g>
+      ))}
+      {/* latency bars */}
+      {[22, 34, 16, 28].map((h, i) => (
+        <rect key={i} x={282 + i * 8} y={160 - h} width="5" height={h} rx="2.5" fill={PLUM} opacity={0.35 + i * 0.15} />
+      ))}
+      <text x="294" y="118" fontSize="9" fontFamily="monospace" fill={PLUM} textAnchor="middle">ms</text>
+    </Frame>
+  );
+}
+
 function VisionLab({ accent }: { accent: string }) {
   return (
     <Frame accent={accent}>
@@ -235,6 +279,8 @@ function Code({ accent }: { accent: string }) {
 
 export default function ProjectArt({ art, accent }: { art: ArtKind; accent: string }) {
   switch (art) {
+    case "voice-agent":
+      return <VoiceAgent accent={accent} />;
     case "vision-lab":
       return <VisionLab accent={accent} />;
     case "kanban":

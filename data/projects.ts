@@ -1,4 +1,4 @@
-export type ProjectArt = "vision-lab" | "kanban" | "mood-wave" | "face-mesh" | "hand-tracking" | "code";
+export type ProjectArt = "voice-agent" | "vision-lab" | "kanban" | "mood-wave" | "face-mesh" | "hand-tracking" | "code";
 
 export interface Project {
   slug: string;
@@ -25,6 +25,25 @@ export interface Project {
 // Ordered by impact — the first entries are shown biggest. Add a project by
 // appending an object; use art: "code" if none of the illustrations fit.
 export const projects: Project[] = [
+  {
+    slug: "voice-virtual-assistant",
+    title: "Voice-Enabled Virtual Assistant",
+    tagline: "Ask your college anything, out loud",
+    description:
+      "A voice assistant for a college: speak or type a question and an LLM router picks the right tool (student records, policy documents, timetable or reminders), then answers in a short spoken reply.",
+    highlights: [
+      "Speech-to-text with faster-whisper, LLM tool routing and spoken replies",
+      "Safe text-to-SQL: SELECT-only, read-only connection, row caps and a repair retry",
+      "Row-level security so each student only sees their own records (JWT + bcrypt)",
+      "RAG over college policies, per-stage latency timings and 115 offline tests",
+    ],
+    tags: ["Python", "FastAPI", "faster-whisper", "Llama 3.1", "Chroma", "SQLite", "Docker", "pytest"],
+    category: "Voice AI · Backend",
+    accent: "#ffe3a3",
+    art: "voice-agent",
+    featured: true,
+    github: "https://github.com/ManasvibaRana/Voice-Enabled-Virtual-Assistance",
+  },
   {
     slug: "py-playground",
     title: "PY Playground",
