@@ -93,60 +93,66 @@ export default function StudioApp() {
             <Experience />
           </div>
 
-          <header
-            className={`pointer-events-none absolute top-4 left-4 z-10 max-w-[min(24rem,calc(100vw-16.5rem))] transition-opacity duration-300 sm:top-6 sm:left-6 ${
-              active ? "opacity-0" : "opacity-100"
-            }`}
-          >
-            <h1 className="font-display text-lg leading-tight font-semibold text-plum sm:text-3xl dark:text-cream">
-              {site.studioName}
-            </h1>
-            <p className="mt-1 hidden text-sm text-plum-soft sm:block sm:text-base dark:text-lavender">{site.tagline}</p>
-            <p className="mt-2 flex items-center gap-1.5 text-xs font-medium text-plum-soft dark:text-lavender">
-              <SparkleIcon width={12} height={12} className="text-peach-deep" />
-              Click an object to explore
-              <span className="hidden lg:inline">
-                or press <kbd className="kbd">1</kbd>-<kbd className="kbd">6</kbd>
-              </span>
-            </p>          </header>
-
-          <div className="absolute top-4 right-4 z-20 flex gap-2 sm:top-6 sm:right-6">
-            <button
-              type="button"
-              onClick={toggleMusic}
-              aria-pressed={music}
-              aria-label={music ? "Pause lo-fi music (M)" : "Play lo-fi music (M)"}
-              title={music ? "Pause lo-fi music (M)" : "Play lo-fi music (M)"}
-              className="icon-btn glass-strong"
-            >
-              {music ? (
-                <span aria-hidden className="eq-bars">
-                  <span />
-                  <span />
-                  <span />
+          {/* Top bar. Phones: two tidy rows (title | Recruiter, tip | music + theme),
+              every control 40px tall. Desktop: one row (title + tagline | three buttons). */}
+          <div className="pointer-events-none absolute inset-x-0 top-0 z-20 flex items-start justify-between gap-3 px-4 pt-4 sm:px-6 sm:pt-6">
+            <header className={`min-w-0 transition-opacity duration-300 ${active ? "opacity-0" : "opacity-100"}`}>
+              <h1 className="font-display text-[17px] leading-10 font-semibold whitespace-nowrap text-plum sm:text-3xl sm:leading-tight dark:text-cream">
+                {site.studioName}
+              </h1>
+              <p className="mt-1 hidden text-base text-plum-soft sm:block dark:text-lavender">{site.tagline}</p>
+              <p className="mt-2 flex items-center gap-1.5 text-xs leading-10 font-medium whitespace-nowrap text-plum-soft sm:leading-normal dark:text-lavender">
+                <SparkleIcon width={12} height={12} className="shrink-0 text-peach-deep" />
+                <span className="sm:hidden">Tap an object to explore</span>
+                <span className="hidden sm:inline">Click an object to explore</span>
+                <span className="hidden lg:inline">
+                  or press <kbd className="kbd">1</kbd>-<kbd className="kbd">6</kbd>
                 </span>
-              ) : (
-                <MusicIcon />
-              )}
-            </button>
-            <button
-              type="button"
-              onClick={() => setDark(!dark)}
-              aria-pressed={dark}
-              aria-label={dark ? "Switch to day" : "Switch to night"}
-              title={dark ? "Day mode (N)" : "Night mode (N)"}
-              className="icon-btn glass-strong"
-            >
-              {dark ? <SunIcon /> : <MoonIcon />}
-            </button>
-            <button
-              type="button"
-              onClick={() => setMode("recruiter")}
-              className="btn glass-strong px-3 text-sm text-plum sm:px-4 sm:text-base dark:text-cream"
-            >
-              <DocIcon width={16} height={16} />
-              Recruiter mode
-            </button>
+              </p>
+            </header>
+
+            <div className="pointer-events-auto flex shrink-0 flex-col-reverse items-end gap-2 sm:flex-row sm:items-center">
+              <div className="flex gap-2">
+                <button
+                  type="button"
+                  onClick={toggleMusic}
+                  aria-pressed={music}
+                  aria-label={music ? "Pause lo-fi music (M)" : "Play lo-fi music (M)"}
+                  title={music ? "Pause lo-fi music (M)" : "Play lo-fi music (M)"}
+                  className="icon-btn glass-strong size-10 sm:size-11"
+                >
+                  {music ? (
+                    <span aria-hidden className="eq-bars">
+                      <span />
+                      <span />
+                      <span />
+                    </span>
+                  ) : (
+                    <MusicIcon width={18} height={18} />
+                  )}
+                </button>
+                <button
+                  type="button"
+                  onClick={() => setDark(!dark)}
+                  aria-pressed={dark}
+                  aria-label={dark ? "Switch to day" : "Switch to night"}
+                  title={dark ? "Day mode (N)" : "Night mode (N)"}
+                  className="icon-btn glass-strong size-10 sm:size-11"
+                >
+                  {dark ? <SunIcon width={18} height={18} /> : <MoonIcon width={18} height={18} />}
+                </button>
+              </div>
+              <button
+                type="button"
+                onClick={() => setMode("recruiter")}
+                aria-label="Recruiter mode"
+                className="btn glass-strong h-10 px-3.5 text-sm text-plum sm:h-11 sm:px-4 sm:text-base dark:text-cream"
+              >
+                <DocIcon width={16} height={16} />
+                <span className="sm:hidden">Recruiter</span>
+                <span className="hidden sm:inline">Recruiter mode</span>
+              </button>
+            </div>
           </div>
 
           <Dock />
