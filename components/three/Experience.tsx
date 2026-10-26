@@ -4,7 +4,7 @@ import { Component, Suspense, useRef, useState, type ReactNode } from "react";
 import { Canvas } from "@react-three/fiber";
 import { PerformanceMonitor } from "@react-three/drei";
 import { HOME_CAMERA } from "@/data/sceneObjects";
-import { isMobileDevice } from "@/lib/device";
+import { isCapableMobile, isMobileDevice } from "@/lib/device";
 import { setMode } from "@/lib/mode";
 import { studio } from "@/lib/store";
 import { Effects } from "./Effects";
@@ -31,9 +31,20 @@ class WebGLBoundary extends Component<{ children: ReactNode }, { failed: boolean
 /** The WebGL canvas. Loaded client-side only (see StudioApp). */
 export default function Experience() {
   const [mobile] = useState(isMobileDevice);
-  // Quality tiers, highest first. Desktop renders slightly above 1x for crisp edges.
+  const [capableMobile] = useState(() => mobile && isCapableMobile());
+  // Quality tiers, highest first. Desktop renders slightly above 1x for crisp edges;
+  // modern phones render near their native sharpness, weaker ones stay light.
   const tiers = mobile
-    ? [{ dpr: [1, 1.5] as [number, number], effects: false }, { dpr: [1, 1] as [number, number], effects: false }]
+    ? capableMobile
+      ? [
+          { dpr: [1.5, 2.5] as [number, number], effects: false },
+          { dpr: [1.25, 1.75] as [number, number], effects: false },
+          { dpr: [1, 1.25] as [number, number], effects: false },
+        ]
+      : [
+          { dpr: [1, 1.75] as [number, number], effects: false },
+          { dpr: [1, 1.25] as [number, number], effects: false },
+        ]
     : [
         { dpr: [1.25, 2] as [number, number], effects: true },
         { dpr: [1.25, 2] as [number, number], effects: false },
@@ -61,16 +72,18 @@ export default function Experience() {
     <WebGLBoundary>
       <Canvas
         flat
-        shadows={!mobile}
+        shadows={!mobile || capableMobile}
         dpr={quality.dpr}
-        gl={{ antialias: !mobile, powerPreference: "high-performance" }}
+        gl={{ antialias: true, powerPreference: "high-performance" }}
         camera={{ position: HOME_CAMERA.position, fov: 30, near: 0.5, far: 80 }}
         onPointerMissed={() => studio.setState({ hovered: null })}
         aria-hidden
       >
-        <PerformanceMonitor onDecline={decline} flipflops={3} onFallback={decline}>
+        {/* Only step down when it's genuinely struggling (<24 fps). The default
+            (50-90 fps) dropped fast 120 Hz phones to the lowest quality. */}
+        <PerformanceMonitor bounds={() => [24, 50]} onDecline={decline} flipflops={3} onFallback={decline}>
           <Suspense fallback={null}>
-            <Scene mobile={mobile} />
+            <Scene mobile={mobile} shadows={!mobile || capableMobile} />
             {quality.effects && <Effects />}
           </Suspense>
         </PerformanceMonitor>

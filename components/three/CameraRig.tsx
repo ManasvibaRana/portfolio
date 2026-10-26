@@ -13,6 +13,9 @@ gsap.ticker.lagSmoothing(0);
 const HOME_TARGET = new THREE.Vector3(...HOME_CAMERA.target);
 const HOME_DIRECTION = new THREE.Vector3(...HOME_CAMERA.position).sub(HOME_TARGET).normalize();
 const HOME_DISTANCE = new THREE.Vector3(...HOME_CAMERA.position).distanceTo(HOME_TARGET);
+// On portrait phones look down a bit more steeply (~40° instead of ~25°) so the
+// room fills more of the tall screen instead of floating in empty space.
+const PORTRAIT_DIRECTION = new THREE.Vector3(9.5, 11.5, 9.9).normalize();
 
 /** Pull a shot back along its view direction so narrow (portrait) screens still fit the subject. */
 function fitShot(position: Vec3, target: Vec3, aspect: number) {
@@ -68,7 +71,11 @@ export function CameraRig() {
   }, [night]);
 
   const home = useMemo(
-    () => HOME_DIRECTION.clone().multiplyScalar(Math.max(HOME_DISTANCE, 17 / aspect)).add(HOME_TARGET),
+    () =>
+      (aspect < 1 ? PORTRAIT_DIRECTION : HOME_DIRECTION)
+        .clone()
+        .multiplyScalar(Math.max(HOME_DISTANCE, 17 / aspect))
+        .add(HOME_TARGET),
     [aspect],
   );
 

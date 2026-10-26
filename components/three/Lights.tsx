@@ -19,7 +19,7 @@ const skyNow = new THREE.Color();
 const sunNow = new THREE.Color();
 
 /** Golden-hour key light + soft fill, eased into a cozy night setup. */
-export function Lights({ shadows }: { shadows: boolean }) {
+export function Lights({ shadows, shadowMapSize }: { shadows: boolean; shadowMapSize: number }) {
   const hemi = useRef<THREE.HemisphereLight>(null);
   const sun = useRef<THREE.DirectionalLight>(null);
   const ambient = useRef<THREE.AmbientLight>(null);
@@ -70,7 +70,7 @@ export function Lights({ shadows }: { shadows: boolean }) {
         intensity={1.9}
         color={SUN_DAY}
         castShadow={shadows}
-        shadow-mapSize={[2048, 2048]}
+        shadow-mapSize={[shadowMapSize, shadowMapSize]}
         shadow-camera-left={-7}
         shadow-camera-right={7}
         shadow-camera-top={7}

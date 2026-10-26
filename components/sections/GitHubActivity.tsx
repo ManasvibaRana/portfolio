@@ -26,7 +26,7 @@ export default function GitHubActivity({ data }: { data: Activity }) {
           </span>
           @{data.user}
         </a>
-        <ul className="flex gap-2 text-sm">
+        <ul className="flex flex-wrap gap-2 text-xs @md:text-sm">
           <li className="gh-stat">
             <strong>{data.publicRepos}</strong> public repos
           </li>
@@ -36,27 +36,29 @@ export default function GitHubActivity({ data }: { data: Activity }) {
         </ul>
       </div>
 
+      {/* min-w-0 lets grid columns shrink below their content on small screens */}
       <div className="mt-5 grid gap-6 @3xl:grid-cols-[1.2fr_1fr]">
-        <div>
+        <div className="min-w-0">
           <h4 className="group-heading">Recently updated</h4>
           <ul className="mt-2.5 space-y-2">
             {data.repos.map((repo) => (
               <li key={repo.name}>
                 <a href={repo.url} target="_blank" rel="noopener noreferrer" className="gh-repo group">
-                  <span className="min-w-0 flex-1">
+                  <span className="w-full min-w-0 @md:w-auto @md:flex-1">
                     <span className="block truncate font-semibold group-hover:underline">{repo.name}</span>
                     {repo.description && (
                       <span className="block truncate text-sm text-plum-soft dark:text-lavender">{repo.description}</span>
                     )}
                   </span>
-                  <span className="shrink-0 text-right text-xs text-plum-soft dark:text-lavender">
+                  {/* stacked under the name on phones, right-aligned on wider screens */}
+                  <span className="flex shrink-0 items-center gap-3 text-xs text-plum-soft @md:block @md:text-right dark:text-lavender">
                     {repo.language && (
-                      <span className="flex items-center justify-end gap-1.5">
+                      <span className="flex items-center gap-1.5 @md:justify-end">
                         <span className="size-2.5 rounded-full" style={{ background: LANGUAGE_COLORS[repo.language] ?? "#a58fe0" }} />
                         {repo.language}
                       </span>
                     )}
-                    <span className="mt-0.5 block">Updated {monthYear(repo.pushedAt)}</span>
+                    <span className="block @md:mt-0.5">Updated {monthYear(repo.pushedAt)}</span>
                   </span>
                 </a>
               </li>
@@ -64,7 +66,7 @@ export default function GitHubActivity({ data }: { data: Activity }) {
           </ul>
         </div>
 
-        <div className="space-y-5">
+        <div className="min-w-0 space-y-5">
           {data.languages.length > 0 && (
             <div>
               <h4 className="group-heading">Languages I push most</h4>
@@ -80,21 +82,25 @@ export default function GitHubActivity({ data }: { data: Activity }) {
           )}
           <div>
             <h4 className="group-heading">Last 6 months</h4>
-            <div className="mt-2.5 overflow-x-auto pb-1">
-              <div className="gh-grid" role="img" aria-label={`${data.totalLastYear} contributions in the last year`}>
-                {data.weeks.map((week, w) => (
-                  <div key={w} className="flex flex-col gap-[3px]">
-                    {week.map((day) => (
-                      <span
-                        key={day.date}
-                        className="gh-cell"
-                        data-level={day.level}
-                        title={`${day.count} contribution${day.count === 1 ? "" : "s"} on ${day.date}`}
-                      />
-                    ))}
-                  </div>
-                ))}
-              </div>
+            {/* columns stretch to fit any width, so the grid never overflows on phones */}
+            <div
+              className="gh-grid mt-2.5"
+              style={{ gridTemplateColumns: `repeat(${data.weeks.length}, minmax(0, 1fr))` }}
+              role="img"
+              aria-label={`${data.totalLastYear} contributions in the last year`}
+            >
+              {data.weeks.map((week, w) => (
+                <div key={w} className="flex flex-col gap-[3px]">
+                  {week.map((day) => (
+                    <span
+                      key={day.date}
+                      className="gh-cell"
+                      data-level={day.level}
+                      title={`${day.count} contribution${day.count === 1 ? "" : "s"} on ${day.date}`}
+                    />
+                  ))}
+                </div>
+              ))}
             </div>
           </div>
         </div>

@@ -31,12 +31,12 @@ function ReadySignal() {
   return null;
 }
 
-export function Scene({ mobile }: { mobile: boolean }) {
+export function Scene({ mobile, shadows }: { mobile: boolean; shadows: boolean }) {
   const reduced = useReducedMotion();
 
   return (
     <>
-      <Lights shadows={!mobile} />
+      <Lights shadows={shadows} shadowMapSize={mobile ? 1024 : 2048} />
       <CameraRig />
 
       <Shadowed>
