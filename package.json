@@ -1,0 +1,37 @@
+{
+  "name": "manasviba-studio",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev",
+    "build": "next build",
+    "start": "next start",
+    "typecheck": "tsc --noEmit"
+  },
+  "dependencies": {
+    "@react-three/drei": "10.0.8",
+    "@react-three/fiber": "9.1.2",
+    "@react-three/postprocessing": "3.0.4",
+    "framer-motion": "11.18.2",
+    "gsap": "3.13.0",
+    "lenis": "1.2.3",
+    "next": "15.5.9",
+    "postprocessing": "6.39.5",
+    "react": "19.1.4",
+    "react-dom": "19.1.4",
+    "resend": "4.1.2",
+    "three": "0.176.0"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "4.1.7",
+    "@types/node": "22.13.10",
+    "@types/react": "19.1.8",
+    "@types/react-dom": "19.1.6",
+    "@types/three": "0.176.0",
+    "tailwindcss": "4.1.7",
+    "typescript": "5.8.3"
+  },
+  "engines": {
+    "node": ">=20.9.0"
+  }
+}

@@ -1,0 +1,19 @@
+node_modules/
+.next/
+.next-build/
+out/
+build/
+coverage/
+*.tsbuildinfo
+next-env.d.ts
+
+.env
+.env.local
+.env.*.local
+
+.vercel
+
+# READMEs drafted for other GitHub repos (copy them over, don't publish here)
+github-readmes/
+.DS_Store
+npm-debug.log*
