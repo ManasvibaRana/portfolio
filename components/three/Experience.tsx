@@ -63,7 +63,10 @@ export default function Experience() {
         flat
         shadows={!mobile || capableMobile}
         dpr={dpr}
-        gl={{ antialias: true, powerPreference: "high-performance" }}
+        // "default", not "high-performance": on dual-GPU laptops (e.g. Intel +
+        // NVIDIA) asking for high performance renders on the discrete GPU and
+        // copies every frame to the display GPU, which flickered black.
+        gl={{ antialias: true, powerPreference: "default" }}
         camera={{ position: HOME_CAMERA.position, fov: 30, near: 0.5, far: 80 }}
         onPointerMissed={() => studio.setState({ hovered: null })}
         aria-hidden

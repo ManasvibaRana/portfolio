@@ -1,6 +1,6 @@
 import { useRef } from "react";
 import { useFrame, useThree } from "@react-three/fiber";
-import { Bloom, EffectComposer, N8AO } from "@react-three/postprocessing";
+import { EffectComposer, N8AO } from "@react-three/postprocessing";
 import type { EffectComposer as EffectComposerImpl } from "postprocessing";
 import * as THREE from "three";
 
@@ -8,7 +8,11 @@ const rendererSize = new THREE.Vector2();
 
 /**
  * Desktop-only post-processing: soft ambient occlusion grounds every object
- * in the room, and bloom makes the fairy lights / desk lamp glow at night.
+ * in the room.
+ *
+ * No bloom: its mipmap blur smears a single invalid pixel across the screen,
+ * which showed up as black flashes while moving the mouse. The fairy lights
+ * and lamp glow fine without it.
  *
  * It stays mounted for the whole session and is switched with `enabled`:
  * mounting or unmounting the composer mid-session showed a black frame.
@@ -31,8 +35,7 @@ export function Effects({ enabled }: { enabled: boolean }) {
 
   return (
     <EffectComposer ref={composer} enabled={enabled} multisampling={4}>
-      <N8AO aoRadius={0.8} distanceFalloff={0.6} intensity={3.6} quality="medium" color="#4a2f5e" />
-      <Bloom mipmapBlur luminanceThreshold={1.15} luminanceSmoothing={0.25} intensity={0.8} />
+      <N8AO aoRadius={0.8} distanceFalloff={0.6} intensity={3.6} quality="medium" color="#4a2f5e" halfRes />
     </EffectComposer>
   );
 }
