@@ -122,12 +122,10 @@ export function CameraRig() {
     );
     camera.lookAt(a.target);
 
-    const persp = camera as THREE.PerspectiveCamera;
-    if (a.offsetX > 0.5 || a.offsetY > 0.5) {
-      persp.setViewOffset(size.width, size.height, a.offsetX, a.offsetY, size.width, size.height);
-    } else if (persp.view?.enabled) {
-      persp.clearViewOffset();
-    }
+    // Keep the view offset permanently on (0 when no panel is open) rather than
+    // toggling it: switching it on/off made the effects pipeline draw one frame
+    // with mismatched buffers, a half-black flash when a panel opened or closed.
+    (camera as THREE.PerspectiveCamera).setViewOffset(size.width, size.height, a.offsetX, a.offsetY, size.width, size.height);
   });
 
   return null;

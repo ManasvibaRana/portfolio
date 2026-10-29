@@ -32,40 +32,29 @@ class WebGLBoundary extends Component<{ children: ReactNode }, { failed: boolean
 export default function Experience() {
   const [mobile] = useState(isMobileDevice);
   const [capableMobile] = useState(() => mobile && isCapableMobile());
-  // Quality tiers, highest first. Desktop renders slightly above 1x for crisp edges;
-  // modern phones render near their native sharpness, weaker ones stay light.
-  const tiers = mobile
-    ? capableMobile
-      ? [
-          { dpr: [1.5, 2.5] as [number, number], effects: false },
-          { dpr: [1.25, 1.75] as [number, number], effects: false },
-          { dpr: [1, 1.25] as [number, number], effects: false },
-        ]
-      : [
-          { dpr: [1, 1.75] as [number, number], effects: false },
-          { dpr: [1, 1.25] as [number, number], effects: false },
-        ]
-    : [
-        { dpr: [1.25, 2] as [number, number], effects: true },
-        { dpr: [1.25, 2] as [number, number], effects: false },
-        { dpr: [1, 1.5] as [number, number], effects: false },
-      ];
-  const [tier, setTier] = useState(0);
-  const tierRef = useRef(0);
-  const quality = tiers[tier];
+  // Resolution is chosen once and never changed mid-session: resizing a live
+  // WebGL canvas shows a black frame. Desktop renders slightly above 1x for crisp
+  // edges; modern phones near their native sharpness, weaker ones stay light.
+  const [dpr] = useState<[number, number]>(() => (mobile ? (capableMobile ? [1.5, 2.5] : [1, 1.75]) : [1.25, 2]));
+  const [effectsOn, setEffectsOn] = useState(!mobile);
+  const effectsRef = useRef(!mobile);
+  const declines = useRef(0);
 
-  // Struggling? Step down a tier. A phone that still can't keep up gets Recruiter mode.
-  // Ignored until the boot screen is gone (loading hitches) and while a panel is
-  // open (the room deliberately stops rendering then, see CameraRig).
+  // Struggling? A desktop first switches its effects off (in place, no remount).
+  // A phone that keeps struggling gets Recruiter mode, a clean page change
+  // instead of a flicker. Ignored until the boot screen is gone (loading
+  // hitches) and while a panel is open (the room deliberately stops rendering
+  // then, see CameraRig).
   const decline = () => {
     const { booted, active } = studio.getState();
     if (!booted || active) return;
-    if (tierRef.current < tiers.length - 1) {
-      tierRef.current += 1;
-      setTier(tierRef.current);
-    } else if (mobile) {
-      setMode("recruiter", { persist: false });
+    if (effectsRef.current) {
+      effectsRef.current = false;
+      setEffectsOn(false);
+      return;
     }
+    declines.current += 1;
+    if (mobile && declines.current >= 2) setMode("recruiter", { persist: false });
   };
 
   return (
@@ -73,7 +62,7 @@ export default function Experience() {
       <Canvas
         flat
         shadows={!mobile || capableMobile}
-        dpr={quality.dpr}
+        dpr={dpr}
         gl={{ antialias: true, powerPreference: "high-performance" }}
         camera={{ position: HOME_CAMERA.position, fov: 30, near: 0.5, far: 80 }}
         onPointerMissed={() => studio.setState({ hovered: null })}
@@ -84,7 +73,7 @@ export default function Experience() {
         <PerformanceMonitor bounds={() => [24, 50]} onDecline={decline} flipflops={3} onFallback={decline}>
           <Suspense fallback={null}>
             <Scene mobile={mobile} shadows={!mobile || capableMobile} />
-            {quality.effects && <Effects />}
+            {!mobile && <Effects enabled={effectsOn} />}
           </Suspense>
         </PerformanceMonitor>
       </Canvas>

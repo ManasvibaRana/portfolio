@@ -1,13 +1,37 @@
+import { useRef } from "react";
+import { useFrame, useThree } from "@react-three/fiber";
 import { Bloom, EffectComposer, N8AO } from "@react-three/postprocessing";
+import type { EffectComposer as EffectComposerImpl } from "postprocessing";
+import * as THREE from "three";
+
+const rendererSize = new THREE.Vector2();
 
 /**
  * Desktop-only post-processing: soft ambient occlusion grounds every object
  * in the room, and bloom makes the fairy lights / desk lamp glow at night.
+ *
+ * It stays mounted for the whole session and is switched with `enabled`:
+ * mounting or unmounting the composer mid-session showed a black frame.
  */
-export function Effects() {
+export function Effects({ enabled }: { enabled: boolean }) {
+  const composer = useRef<EffectComposerImpl>(null);
+  const gl = useThree((s) => s.gl);
+
+  // The composer only resizes its buffers in an effect, i.e. after the canvas
+  // has already been resized and drawn, which shows a half-black frame on
+  // every resize. Resize them right before rendering instead (this runs at
+  // priority 0, ahead of the composer's own render at priority 1).
+  useFrame(() => {
+    const c = composer.current;
+    if (c && (c.inputBuffer.width !== gl.domElement.width || c.inputBuffer.height !== gl.domElement.height)) {
+      gl.getSize(rendererSize);
+      c.setSize(rendererSize.width, rendererSize.height);
+    }
+  });
+
   return (
-    <EffectComposer multisampling={4}>
-      <N8AO aoRadius={0.8} distanceFalloff={0.6} intensity={3.6} quality="medium" color="#4a2f5e" halfRes />
+    <EffectComposer ref={composer} enabled={enabled} multisampling={4}>
+      <N8AO aoRadius={0.8} distanceFalloff={0.6} intensity={3.6} quality="medium" color="#4a2f5e" />
       <Bloom mipmapBlur luminanceThreshold={1.15} luminanceSmoothing={0.25} intensity={0.8} />
     </EffectComposer>
   );
