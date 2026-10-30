@@ -1,4 +1,4 @@
-import { useRef, type ReactNode } from "react";
+import { useRef, type CSSProperties, type ReactNode } from "react";
 import { useFrame, type ThreeEvent } from "@react-three/fiber";
 import { Html } from "@react-three/drei";
 import * as THREE from "three";
@@ -20,6 +20,11 @@ export function Interactive({ id, position, rotation, labelOffset = [0, 1, 0], c
   const lift = useRef<THREE.Group>(null);
   const hovered = useStudio((s) => s.hovered === id);
   const intro = useStudio((s) => s.introLabels && s.active === null && s.hovered === null);
+  // "Where to look" hotspot: shown until this object has been opened, and
+  // stepped aside whenever the label takes its place or a panel is open.
+  const showHotspot = useStudio(
+    (s) => s.booted && !s.introLabels && s.active === null && s.hovered !== id && !s.visited.includes(id),
+  );
 
   useFrame((_, dt) => {
     if (!lift.current) return;
@@ -57,6 +62,21 @@ export function Interactive({ id, position, rotation, labelOffset = [0, 1, 0], c
           >
             {sceneObjects[id].label}
           </span>
+        </Html>
+      )}
+      {showHotspot && (
+        <Html position={labelOffset} center zIndexRange={[25, 0]}>
+          {/* Decorative shortcut; keyboard and screen-reader users have the dock. */}
+          <button
+            type="button"
+            tabIndex={-1}
+            aria-hidden
+            className="hotspot"
+            style={{ "--hotspot-delay": `${objectOrder.indexOf(id) * 0.3}s` } as CSSProperties}
+            onClick={() => studio.setState({ active: id, hovered: null })}
+          >
+            <span className="hotspot-core" />
+          </button>
         </Html>
       )}
     </group>

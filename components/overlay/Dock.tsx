@@ -21,6 +21,7 @@ const ICONS: Record<ObjectId, ComponentType<SVGProps<SVGSVGElement>>> = {
 export default function Dock() {
   const active = useStudio((s) => s.active);
   const hovered = useStudio((s) => s.hovered);
+  const visited = useStudio((s) => s.visited);
   if (active) return null;
 
   const highlight = (id: ObjectId | null) => studio.setState({ hovered: id });
@@ -39,13 +40,15 @@ export default function Dock() {
                 onBlur={() => highlight(null)}
                 onMouseEnter={() => highlight(id)}
                 onMouseLeave={() => highlight(null)}
-                aria-label={`Open ${sceneObjects[id].section}`}
+                aria-label={`Open ${sceneObjects[id].section}${visited.includes(id) ? "" : " (not explored yet)"}`}
                 aria-keyshortcuts={String(i + 1)}
                 title={`${sceneObjects[id].label} (${i + 1})`}
-                className={`flex items-center gap-2 rounded-full px-3 py-2.5 font-display text-sm font-medium text-plum transition-colors hover:bg-lavender/40 dark:text-cream dark:hover:bg-white/10 ${
+                className={`relative flex items-center gap-2 rounded-full px-3 py-2.5 font-display text-sm font-medium text-plum transition-colors hover:bg-lavender/40 dark:text-cream dark:hover:bg-white/10 ${
                   hovered === id ? "bg-lavender/40 dark:bg-white/10" : ""
                 }`}
               >
+                {/* matches the room's "not explored yet" hotspots */}
+                {!visited.includes(id) && <span aria-hidden className="dock-dot" />}
                 <Icon width={18} height={18} />
                 <span className="hidden lg:inline">{sceneObjects[id].label}</span>
               </button>

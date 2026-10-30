@@ -17,6 +17,8 @@ export interface StudioState {
   lampOn: boolean;
   /** Bumped when the character is clicked, to make her wave. */
   waveRequest: number;
+  /** Objects the visitor has opened; the rest get a pulsing hotspot. */
+  visited: ObjectId[];
 }
 
 const initialState: StudioState = {
@@ -29,6 +31,7 @@ const initialState: StudioState = {
   music: false,
   lampOn: false,
   waveRequest: 0,
+  visited: [],
 };
 
 let state = initialState;

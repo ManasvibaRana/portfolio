@@ -8,6 +8,7 @@ import BootScreen from "@/components/overlay/BootScreen";
 import { objectOrder } from "@/data/sceneObjects";
 import { startLofi, stopLofi } from "@/lib/lofi";
 import { setMode, useMode } from "@/lib/mode";
+import { VISITED_KEY } from "@/lib/storageKeys";
 import { studio, useStudio } from "@/lib/store";
 import { setDark, useDark } from "@/lib/theme";
 
@@ -33,6 +34,32 @@ export default function StudioApp() {
   const active = useStudio((s) => s.active);
   const booted = useStudio((s) => s.booted);
   const music = useStudio((s) => s.music);
+  const explored = useStudio((s) => s.visited.length);
+
+  // Remember which objects this visitor has opened, so the "where to look"
+  // hotspots only point at what's left (kept in their browser only).
+  useEffect(() => {
+    try {
+      const saved = JSON.parse(localStorage.getItem(VISITED_KEY) ?? "[]") as unknown;
+      if (Array.isArray(saved)) {
+        studio.setState({ visited: objectOrder.filter((id) => saved.includes(id)) });
+      }
+    } catch {
+      // storage unavailable or corrupt: start fresh
+    }
+  }, []);
+  useEffect(() => {
+    if (!active) return;
+    const { visited } = studio.getState();
+    if (visited.includes(active)) return;
+    const next = [...visited, active];
+    studio.setState({ visited: next });
+    try {
+      localStorage.setItem(VISITED_KEY, JSON.stringify(next));
+    } catch {
+      // storage unavailable: progress just won't be remembered
+    }
+  }, [active]);
 
   // The desk lamp follows night mode (it can still be clicked on/off in the room).
   useEffect(() => {
@@ -41,8 +68,10 @@ export default function StudioApp() {
 
   // Right after the room appears, pop up every object's name so first-time
   // visitors know where to look.
+  // (Skipped on narrow screens, where the six labels would pile on top of each
+  // other; the small "where to look" dots guide phone visitors instead.)
   useEffect(() => {
-    if (!booted) return;
+    if (!booted || window.innerWidth < 640) return;
     studio.setState({ introLabels: true });
     const timer = window.setTimeout(() => studio.setState({ introLabels: false }), 3400);
     return () => window.clearTimeout(timer);
@@ -103,11 +132,21 @@ export default function StudioApp() {
               <p className="mt-1 hidden text-base text-plum-soft sm:block dark:text-lavender">{site.tagline}</p>
               <p className="mt-2 flex items-center gap-1.5 text-xs leading-10 font-medium whitespace-nowrap text-plum-soft sm:leading-normal dark:text-lavender">
                 <SparkleIcon width={12} height={12} className="shrink-0 text-peach-deep" />
-                <span className="sm:hidden">Tap an object to explore</span>
-                <span className="hidden sm:inline">Click an object to explore</span>
-                <span className="hidden lg:inline">
-                  or press <kbd className="kbd">1</kbd>-<kbd className="kbd">6</kbd>
-                </span>
+                {explored === 0 ? (
+                  <>
+                    <span className="sm:hidden">Tap a glowing dot to explore</span>
+                    <span className="hidden sm:inline">Click a glowing dot to explore</span>
+                    <span className="hidden lg:inline">
+                      or press <kbd className="kbd">1</kbd>-<kbd className="kbd">6</kbd>
+                    </span>
+                  </>
+                ) : explored < objectOrder.length ? (
+                  <span>
+                    {explored} of {objectOrder.length} explored
+                  </span>
+                ) : (
+                  <span>All explored, nice work!</span>
+                )}
               </p>
             </header>
 

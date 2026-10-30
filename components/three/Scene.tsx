@@ -43,7 +43,8 @@ export function Scene({ mobile, shadows }: { mobile: boolean; shadows: boolean }
         <Room />
         <Desk />
 
-        <Interactive id="laptop" position={[0.35, DESK_TOP, -1.9]} labelOffset={[0, 0.75, 0]}>
+        {/* label/dot at the lid's right edge so it doesn't sit on her face behind it */}
+        <Interactive id="laptop" position={[0.35, DESK_TOP, -1.9]} labelOffset={[0.42, 0.5, 0.2]}>
           <Laptop />
         </Interactive>
         <Interactive id="whiteboard" position={[-1.6, 2.25, -3.5]} labelOffset={[0, 0.85, 0.2]}>
@@ -55,7 +56,8 @@ export function Scene({ mobile, shadows }: { mobile: boolean; shadows: boolean }
         <Interactive id="trophies" position={[-3.32, 2.3, 1.7]} rotation={[0, Math.PI / 2, 0]} labelOffset={[0, 0.65, 0]}>
           <TrophyShelf />
         </Interactive>
-        <Interactive id="mailbox" position={[1.25, DESK_TOP, -1.45]} labelOffset={[0, 0.6, 0]}>
+        {/* nudged right so its label/dot doesn't collide with the laptop's */}
+        <Interactive id="mailbox" position={[1.25, DESK_TOP, -1.45]} labelOffset={[0.35, 0.42, 0.2]}>
           <Mailbox />
         </Interactive>
         <Interactive id="speaker" position={[-0.45, DESK_TOP, -1.38]} labelOffset={[0, 0.55, 0]}>

@@ -335,6 +335,97 @@ html[data-mode="3d"].dark .studio-layer {
   color: var(--color-cream);
 }
 
+/* "Where to look" hotspots: a pulsing dot above each object not yet opened */
+.hotspot {
+  position: relative;
+  display: grid;
+  place-items: center;
+  width: 30px;
+  height: 30px;
+  border-radius: 999px;
+  cursor: pointer;
+  animation: hotspot-in 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+.hotspot::before,
+.hotspot::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  border-radius: 999px;
+  border: 2px solid var(--color-peach-deep);
+  animation: hotspot-ring 2s ease-out infinite;
+  animation-delay: var(--hotspot-delay, 0s);
+}
+
+.hotspot::after {
+  animation-delay: calc(1s + var(--hotspot-delay, 0s));
+}
+
+.hotspot-core {
+  width: 14px;
+  height: 14px;
+  border-radius: 999px;
+  background: var(--color-peach-deep);
+  border: 2.5px solid #ffffff;
+  box-shadow:
+    0 0 0 4px rgb(246 165 127 / 0.25),
+    0 4px 10px rgb(61 35 80 / 0.3);
+  transition: transform 150ms ease;
+}
+
+.hotspot:hover .hotspot-core {
+  transform: scale(1.25);
+}
+
+.dark .hotspot::before,
+.dark .hotspot::after {
+  border-color: var(--color-lavender);
+}
+
+.dark .hotspot-core {
+  background: var(--color-lavender);
+  border-color: #2a2142;
+  box-shadow:
+    0 0 0 4px rgb(201 182 240 / 0.25),
+    0 0 14px rgb(201 182 240 / 0.6);
+}
+
+@keyframes hotspot-ring {
+  from {
+    transform: scale(0.5);
+    opacity: 0.9;
+  }
+  to {
+    transform: scale(1.6);
+    opacity: 0;
+  }
+}
+
+@keyframes hotspot-in {
+  from {
+    opacity: 0;
+    transform: scale(0.3);
+  }
+}
+
+/* Small dot on dock buttons for objects not explored yet */
+.dock-dot {
+  position: absolute;
+  top: 5px;
+  right: 6px;
+  width: 7px;
+  height: 7px;
+  border-radius: 999px;
+  background: var(--color-peach-deep);
+  box-shadow: 0 0 0 2px #fffaf3;
+}
+
+.dark .dock-dot {
+  background: var(--color-lavender);
+  box-shadow: 0 0 0 2px #211a35;
+}
+
 /* First-visit hint: every label pops in, one after another */
 .studio-label-intro {
   background: var(--color-plum);
