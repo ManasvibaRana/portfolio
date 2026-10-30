@@ -340,11 +340,18 @@ html[data-mode="3d"].dark .studio-layer {
   position: relative;
   display: grid;
   place-items: center;
-  width: 30px;
-  height: 30px;
+  width: 20px;
+  height: 20px;
   border-radius: 999px;
   cursor: pointer;
   animation: hotspot-in 400ms cubic-bezier(0.34, 1.56, 0.64, 1) both;
+}
+
+/* bigger invisible tap area so the small dot is still easy to hit */
+.hotspot > .hotspot-core::after {
+  content: "";
+  position: absolute;
+  inset: -10px;
 }
 
 .hotspot::before,
@@ -353,7 +360,7 @@ html[data-mode="3d"].dark .studio-layer {
   position: absolute;
   inset: 0;
   border-radius: 999px;
-  border: 2px solid var(--color-peach-deep);
+  border: 1.5px solid var(--color-peach-deep);
   animation: hotspot-ring 2s ease-out infinite;
   animation-delay: var(--hotspot-delay, 0s);
 }
@@ -363,14 +370,15 @@ html[data-mode="3d"].dark .studio-layer {
 }
 
 .hotspot-core {
-  width: 14px;
-  height: 14px;
+  position: relative;
+  width: 9px;
+  height: 9px;
   border-radius: 999px;
   background: var(--color-peach-deep);
-  border: 2.5px solid #ffffff;
+  border: 1.5px solid #ffffff;
   box-shadow:
-    0 0 0 4px rgb(246 165 127 / 0.25),
-    0 4px 10px rgb(61 35 80 / 0.3);
+    0 0 0 3px rgb(246 165 127 / 0.22),
+    0 2px 6px rgb(61 35 80 / 0.25);
   transition: transform 150ms ease;
 }
 
@@ -387,8 +395,8 @@ html[data-mode="3d"].dark .studio-layer {
   background: var(--color-lavender);
   border-color: #2a2142;
   box-shadow:
-    0 0 0 4px rgb(201 182 240 / 0.25),
-    0 0 14px rgb(201 182 240 / 0.6);
+    0 0 0 3px rgb(201 182 240 / 0.22),
+    0 0 10px rgb(201 182 240 / 0.55);
 }
 
 @keyframes hotspot-ring {
