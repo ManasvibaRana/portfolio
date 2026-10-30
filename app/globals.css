@@ -746,6 +746,36 @@ html[data-mode="3d"].dark .studio-layer {
   color: var(--color-plum);
 }
 
+/* Project feature pills (short highlights), tinted with the project's colour */
+.feature-pill {
+  display: inline-flex;
+  align-items: center;
+  gap: 0.4rem;
+  padding: 0.35rem 0.75rem;
+  border-radius: 999px;
+  background: color-mix(in srgb, var(--accent) 45%, white);
+  color: var(--color-plum);
+  font-family: var(--font-display);
+  font-size: 0.88rem;
+  font-weight: 500;
+  line-height: 1.2;
+}
+
+.dark .feature-pill {
+  background: color-mix(in srgb, var(--accent) 22%, #2a2142);
+  color: var(--color-cream);
+}
+
+.sticker-more {
+  background: transparent;
+  border-style: dashed;
+  color: var(--color-plum-soft);
+}
+
+.dark .sticker-more {
+  color: var(--color-lavender);
+}
+
 /* Tech "stickers": slightly tilted, like laptop stickers */
 .sticker {
   padding: 0.2rem 0.6rem;

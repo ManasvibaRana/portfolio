@@ -17,20 +17,15 @@ function WindowBar({ project }: { project: Project }) {
   );
 }
 
+/** Short feature labels as tinted pills: quick to scan instead of sentences. */
 function Highlights({ project }: { project: Project }) {
   return (
-    <ul className="mt-4 space-y-2">
+    <ul className="mt-4 flex flex-wrap gap-2" aria-label="Key features">
       {project.highlights.map((item) => (
-        <li key={item} className="flex gap-2.5 text-[0.95rem] leading-snug">
-          <span
-            aria-hidden
-            className="mt-[3px] grid size-4 shrink-0 place-items-center rounded-full"
-            style={{ background: project.accent }}
-          >
-            <svg viewBox="0 0 12 12" width="9" height="9">
-              <path d="m2.5 6 2.3 2.3L9.5 3.5" stroke="#3d2350" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
-            </svg>
-          </span>
+        <li key={item} className="feature-pill" style={{ "--accent": project.accent } as CSSProperties}>
+          <svg viewBox="0 0 12 12" width="10" height="10" aria-hidden>
+            <path d="m2.5 6 2.3 2.3L9.5 3.5" stroke="currentColor" strokeWidth="1.8" fill="none" strokeLinecap="round" strokeLinejoin="round" />
+          </svg>
           {item}
         </li>
       ))}
@@ -38,15 +33,25 @@ function Highlights({ project }: { project: Project }) {
   );
 }
 
+const MAX_STICKERS = 5;
+
 function Stickers({ tags }: { tags: string[] }) {
   if (tags.length === 0) return null;
+  const shown = tags.slice(0, MAX_STICKERS);
+  const hidden = tags.slice(MAX_STICKERS);
   return (
-    <ul className="mt-5 flex flex-wrap gap-1.5" aria-label="Tech stack">
-      {tags.map((tag) => (
+    <ul className="mt-4 flex flex-wrap gap-1.5" aria-label="Tech stack">
+      {shown.map((tag) => (
         <li key={tag} className="sticker">
           {tag}
         </li>
       ))}
+      {hidden.length > 0 && (
+        <li className="sticker sticker-more" title={hidden.join(", ")}>
+          +{hidden.length}
+          <span className="sr-only">: {hidden.join(", ")}</span>
+        </li>
+      )}
     </ul>
   );
 }
@@ -97,9 +102,9 @@ function FeaturedCard({ project, index }: { project: Project; index: number }) {
             <ProjectArt art={project.art} accent={project.accent} />
           </div>
         </div>
-        <div className="flex flex-col p-5 sm:p-6">
+        <div className="flex flex-col justify-center p-5 sm:p-7">
           <Heading project={project} index={index} />
-          <p className="mt-3 leading-relaxed">{project.description}</p>
+          <p className="mt-3 text-[1.02rem] leading-relaxed">{project.description}</p>
           <Highlights project={project} />
           <Stickers tags={project.tags} />
           <CodeLink project={project} />
@@ -120,7 +125,7 @@ function CompactCard({ project, index }: { project: Project; index: number }) {
       </div>
       <div className="flex flex-1 flex-col p-5">
         <Heading project={project} index={index} />
-        <p className="mt-3 text-[0.95rem] leading-relaxed">{project.description}</p>
+        <p className="mt-2.5 text-[0.95rem] leading-relaxed">{project.description}</p>
         <Highlights project={project} />
         <Stickers tags={project.tags} />
         <div className="mt-auto" />
